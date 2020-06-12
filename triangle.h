@@ -7,7 +7,6 @@
 class Triangle : public Point{
 public:
     Triangle(Point&, Point&, Point&);
-    bool checkTriangle(Point&, Point&, Point&);
     void checkTriangleType(Point&, Point&, Point&);
     double poluPerimetar(Point&, Point&, Point&);
     double areaTriangle(Point&, Point&, Point&);
