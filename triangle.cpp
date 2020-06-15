@@ -2,127 +2,169 @@
 #include "exceptions.h"
 #include <cmath>
 
-///Конструктор в който имаме проверка за валидност на триъгълник.
-Triangle::Triangle(Point& firstPoint, Point& secondPoint, Point& ThirdPoint){
-    if(firstPoint.getX() == secondPoint.getX() && firstPoint.getY() == secondPoint.getY()) throw EqualPointException(1,2);
-    if(firstPoint.getX() == thirdPoint.getX() && firstPoint.getY() == thirdPoint.getY()) throw EqualPointException(1,3);
-    if(secondPoint.getX() == thirdPoint.getX() && secondPoint.getY() == thirdPoint.getY()) throw EqualPointException(2,3);
+//d = ((x2 - x1)2 + (y2 - y1)2 + (z2 - z1)2)1/2
 
+double Triangle::length(Point& p1, Point& p2){
+    return pow(pow(p2.getX() - p1.getX(),2) + pow(p2.getY() - p1.getY(),2) + pow(p2.getZ() - p1.getZ(),2),0.5);
+   }
+
+
+Triangle::Triangle(Point& firstPoint, Point& secondPoint, Point& thirdPoint){
+    if(firstPoint.getX() == secondPoint.getX() && firstPoint.getY() == secondPoint.getZ()) throw EPE(1,2);
+    if(firstPoint.getX() == thirdPoint.getX() && firstPoint.getY() == thirdPoint.getZ()) throw EPE(1,3);
+    if(secondPoint.getX() == thirdPoint.getX() && secondPoint.getY() == thirdPoint.getZ()) throw EPE(2,3);
     this->firstPoint = firstPoint;
     this->secondPoint = secondPoint;
     this->thirdPoint = thirdPoint;
+    cout <<"Triangle with Points:  " << firstPoint << ',' << secondPoint << ',' << thirdPoint << endl;
+    aLen = length(this->secondPoint, this->thirdPoint);
+    bLen = length(this->firstPoint, this->thirdPoint);
+    cLen = length(this->firstPoint, this->secondPoint);
 }
 
-///Полупериметър на триъгълник
-double Triangle::poluPerimetar(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
-{
-    ///формула за полупериметър сбор на 3 страни, който се дели на 2.
-    return(firstPoint.getX() + secondPoint.getY() + ThirdPoint.getZ())/2;
+double Triangle::maximum() {
+    Triangle& t1 = *this;
+    double max = t1.aLen;
+
+    if (t1.bLen > max) {
+        max = t1.bLen;
 }
-/// Проверка за тип на триъгълник.
-void Triangle::checkTriangleType(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
+    if (t1.cLen > max) {
+        max = t1.cLen;
+}
+    return max;
+}
+
+double Triangle::Perimetar()
 {
 
+    return(aLen + bLen + cLen);
+}
 
-        ///Проверка за равностранен триъгълник, като сравняваме страните му.
-        if(firstPoint.getX() == secondPoint.getY() && secondPoint.getY() == ThirdPoint.getZ()){
-            cout<<"Ravnostranen"<<endl;
-        }
+double Triangle::poluPerimetar()
+{
+    Triangle& t1 = *this;
+    return (t1.Perimetar())/2;
+}
 
-        ///Проверка за равнобедрен триъгълник, като сравняваме страните му.
-        else if(firstPoint.getX() == secondPoint.getY()|| secondPoint.getY() == ThirdPoint.getZ() ||
-                ThirdPoint.getZ() == firstPoint.getX())
-        {
-                    cout<<"Ravnobedren"<<endl;
-        }
+double Triangle::areaTriangle()
+{
+    Triangle& t1 = *this;
+    double p = t1.poluPerimetar();
+    return sqrt(p*(p-aLen)*(p-bLen)*(p-cLen));
+}
 
-        else
-        {
-            cout<<"Raznostranen"<<endl;
-        }
+void Triangle::sideType(Triangle&, t1)
+{
+    Triangle& t1 = *this;
 
-
-        ///Проверка за най-голяма страна в триъгълника, за улеснение, за проверка на типа на триъгълника.
-    double longest = ThirdPoint.getZ();
-    if(longest < firstPoint.getX()){
-        ThirdPoint.getZ() = longest;
-        longest = firstPoint.getX();
-        firstPoint.getX() = ThirdPoint.getZ();
-    }
-    if(longest < secondPoint.getY()){
-        ThirdPoint.getZ() = longest;
-        longest = secondPoint.getY();
-        secondPoint.getY() = ThirdPoint.getZ();
-    }
-
-    ///Проверка за правоъгълен триъгълник по формулата c^2 = a^2 + b^2.
-    if(firstPoint.getX()*firstPoint.getX() + secondPoint.getY()*secondPoint.getY() == longest*longest)
+    if(aLen == bLen && bLen==cLen)
     {
-        cout<<"Pravougulen"<<endl;
-
+        cout<<"Ravnostranen\n";
     }
-    ///Проверка за остроъгълен триъгълник по формулата a^2 + b^2 > c^2.
-    else if(firstPoint.getX()*firstPoint.getX() + secondPoint.getY()*secondPoint.getY() >longest*longest)
+    else if(aLen==bLen || aLen==cLen || bLen==cLen)
     {
-        cout <<"Ostrougulen"<<endl;
+        cout<<"Ravnobedren\n";
     }
-    else
+    else{
+        cout<<"Raznostranen\n";
+    }
+}
+
+void Triangle::angleType(Triangle& t1)
+{
+    Triangle& t1 = *this;
+
+    if(aLen + bLen > cLen)
     {
-        cout<<"Tupougulen"<<endl;
+        cout <<"Ostrougulen\n";
+    }
+    else if(pow(aLen,2)+pow(bLen,2) == pow(cLen,2))
+    {
+        cout<<"Pravougulen\n";
+    }
+    else{
+        cout<<"Tupougulen\n";
     }
 
 }
 
-///Метод за изчисление на лице на триъгълник по Херонова формула.
-double Triangle::areaTriangle(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
+void Triangle::triangleType(Triangle& t1)
 {
-    ///Намираме полупериметъра на триъгълника, чрез метода по-горе.
-    double p = poluPerimetar(firstPoint,secondPoint,ThirdPoint);
+    Triangle& t1 = *this;
 
-    ///херонова формула.
-    return sqrt(p*(p-firstPoint.getX())*(p-secondPoint.getY())*(p-ThirdPoint.getZ()));
+    cout<<"Triugulnikut e: "<<sideType(Triangle& t1)<<" i "<<angleType(Triangle& t1)<<endl;
+
 }
 
-///Метод за намиране на периметъра на триъгълник a+b+c.
-double Triangle::perimetar(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
+double Triangle::mediCentar(Triangle& t1)
 {
-    return (firstPoint.getX() + secondPoint.getY() + ThirdPoint.getZ());
+    double a = (firstPoint.getX()+ secondPoint.getX() + thirdPoint.getX())/3;
+    double b = (firstPoint.getY() + secondPoint.getY() + thirdPoint.getY())/3;
+    double c = (firstPoint.getZ() + secondPoint.getZ() + thirdPoint.getZ())/3;
+
+    return Point(a,b,c);
 }
 
-///Метод за намиране на медиана 1.
-double Triangle::mX(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
+bool Triangle::operator <(Point& p)
 {
-    ///формула за намиране на медиана на mX(mA).
-    return(sqrt(2*(ThirdPoint.getZ()*ThirdPoint.getZ())+2*(secondPoint.getY()*secondPoint.getY())-
-                (firstPoint.getX()*firstPoint.getX()))/2);
-}
-///Метод за намиране на медиана 2.
-double Triangle::mY(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
-{
-    ///формула за намиране на медиана на mY(mB).
-    return (sqrt(2*(ThirdPoint.getZ()*ThirdPoint.getZ())+2*(firstPoint.getX()*firstPoint.getX())-
-                 (secondPoint.getY()*secondPoint.getY()))/2);
-}
-///Метод за намиране на медиана 3.
-double Triangle::mZ(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
-{
-    ///формула за намиране на медиана на mZ(mC).
-    return(sqrt(2*(firstPoint.getX()*firstPoint.getX())+2*(secondPoint.getY()*secondPoint.getY())-
-                (ThirdPoint.getZ()*ThirdPoint.getZ()))/2);
-}
-///Метод за намиране на медицентър.
-double Triangle::mediCentar(Point& firstPoint, Point& secondPoint, Point& ThirdPoint)
-{
+    double A = ((secondPoint.getY() - thirdPoint.getY())*(p.getX()-thirdPoint.getX())+(thirdPoint.getX() - secondPoint.getX())*
+                (p.getY()-thirdPoint.getY())/(secondPoint.getY()-thirdPoint.getY())*(firstPoint.getX()-thirdPoint.getX())+
+                (thirdPoint.getX() - secondPoint.getX())*(firstPoint.getY()-thirdPoint.getY()));
 
-    double m1 = mX(firstPoint, secondPoint, ThirdPoint);
-    double m2 = mY(firstPoint, secondPoint, ThirdPoint);
-    double m3 = mZ(firstPoint, secondPoint, ThirdPoint);
+    double B = ((thirdPoint.getY()- firstPoint.getY())*(p.getX() - thirdPoint.getX())+(firstPoint.getX()-thirdPoint.getX())*
+                (p.getY()-thirdPoint.getY())/(secondPoint.getY()-thirdPoint.getY())*(firstPoint.getX()-thirdPoint.getX())+
+                (thirdPoint.getX()-secondPoint.getX())*(firstPoint.getY()-thirdPoint.getY()));
 
-    ///формула за медицентър.
-    return ((m1 + m2 + m3)/3);
-    /*((mX(Point& firstPoint, Point& secondPoint, Point& ThirdPoint) +
-    mY(Point& firstPoint, Point& secondPoint, Point& ThirdPoint) +
-    mZ(Point& firstPoint, Point& secondPoint, Point& ThirdPoint))/3);
-    */
+    double C = 1.0 - A - B;
+
+    if((A > 0)&&(B>0)&&(C>0))
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
+bool Triangle::operator>(Point& p)
+{
+    double A = ((secondPoint.getY()-thirdPoint.getY())*(p.getX()-thirdPoint.getX())+(thirdPoint.getX()-secondPoint.getX())*
+                (p.getY()-thirdPoint.getY())/((secondPoint.getY()-thirdPoint.getY())*(firstPoint.getX()-thirdPoint.getX())+
+                                              (thirdPoint.getX()-secondPoint.getX())*(firstPoint.getY()-thirdPoint.getY())));
+
+    double B = ((thirdPoint.getY()-firstPoint.getY())*(p.getX()-thirdPoint.getX())+(firstPoint.getX()-thirdPoint.getX())*
+                (p.getY()-thirdPoint.getY())/((secondPoint.getY()-thirdPoint.getY())*(firstPoint.getX()-thirdPoint.getX))+
+                (thirdPoint.getX()-secondPoint.getX())*(firstPoint.getY()-thirdPoint.getY()));
+
+    double C = 1.0 - A - B;
+
+    if((A>0)&&(B>0)&&(C>0))
+    {
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+
+bool Triangle::operator==(Point& p)
+{
+    double A = ((secondPoint.getY()-thirdPoint.getY())*(p.getX()-thirdPoint.getX())+(thirdPoint.getX()-secondPoint.getX())*
+                (p.getY()-thirdPoint.getY())/((secondPoint.getY()-thirdPoint.getY())*(firstPoint.getX()-thirdPoint.getX())+
+                                              (thirdPoint.getX()-secondPoint.getX())*(firstPoint.getY()-thirdPoint.getY())));
+
+    double B = ((thirdPoint.getY()-firstPoint.getY())*(p.getX()-thirdPoint.getX())+(firstPoint.getX()-thirdPoint.getX())*
+                (p.getY()-thirdPoint.getY())/((secondPoint.getY()-thirdPoint.getY())*(firstPoint.getX()-thirdPoint.getX())+
+                                              (thirdPoint.getX()-secondPoint.getX())*(firstPoint.getY()-thirdPoint.getY())));
+
+    double C = 1.0 - A - B;
+
+    if((A==0)&&(B==0)&&(C==0))
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
+}

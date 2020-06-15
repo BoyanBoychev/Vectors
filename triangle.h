@@ -2,24 +2,31 @@
 #define TRIANGLE_H
 
 #include"point.h"
-#include <cmath>
+
 
 class Triangle : public Point{
 public:
     Triangle(Point&, Point&, Point&);
-    void checkTriangleType(Point&, Point&, Point&);
-    double poluPerimetar(Point&, Point&, Point&);
-    double areaTriangle(Point&, Point&, Point&);
-    double perimetar(Point&, Point&, Point&);
-    double mX(Point&, Point&, Point&);
-    double mY(Point&, Point&, Point&);
-    double mZ(Point&, Point&, Point&);
-    double mediCentar(Point&, Point&, Point&);
+    Triangle(double&, double&, double&);
+    void sideType(Triangle&);
+    void angleType(Triangle&);
+    void triangleType(Triangle&);
+    double Perimetar();
+    double areaTriangle();
+    double poluPerimetar();
+    double mediCentar(Triangle&);
+    double length(Point&, Point&);
+    void largestSide(double,double,double);
+    double maximum();
 
+    bool operator <(Point&);
+    bool operator > (Point&);
+    bool operator ==(Point&);
 private:
     Point firstPoint;
     Point secondPoint;
     Point thirdPoint;
-    unsigned longest;
+    double aLen,bLen,cLen;
+    double longest;
 };
 #endif // TRIANGLE_H
